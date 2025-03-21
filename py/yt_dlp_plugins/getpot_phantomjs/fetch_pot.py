@@ -21,11 +21,11 @@ def fetch_pots(ie, content_bindings, extra_args=None, phantom_jsi=None, *args, *
             ie, content_bindings, extra_args=extra_args, phantom_jsi=phantom_jsi, *args, **kwargs)
     execute = functools.partial(
         phantom_jsi.execute,
-        # web-security = false required due to CORS
         phantom_args=[
-            '--ignore-ssl-errors=true',
+            # '--ssl-protocol=any'
+            # '--ignore-ssl-errors=true',
             '--web-security=false',
-            '--proxy=https://127.0.0.1:8080',
+            # '--proxy=https://127.0.0.1:8080',
             *(extra_args or [])
         ],
         script_args=content_bindings)

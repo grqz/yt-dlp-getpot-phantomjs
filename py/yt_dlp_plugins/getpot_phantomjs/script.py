@@ -1,3 +1,4 @@
+# TODO: write a script to automatically generate this file
 # pot.es5.cjs
 SCRIPT = r'''var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36(KHTML, like Gecko)';
 var GOOG_API_KEY = 'AIzaSyDyT5W0Jh49F30Pqqtyfdf7pDLFKLJoAnw';
@@ -47,55 +48,53 @@ function compatGetProcessArgs() {
 }
 
 function compatFetch(resolve, reject, url, req) {
-    req = req || {};
-    req.method = req.method ? req.method.toUpperCase() : (req.body ? 'POST' : 'GET');
-    req.headers = req.headers || {};
-    req.body = req.body || null;
-    if (typeof fetch === 'function') {
-        fetch(url, req).then(function (response) {
-            return {
-                ok: response.ok,
-                status: response.status,
-                url: response.url,
-                text: function (resolve, reject) {
-                    response.text().then(resolve).catch(reject);
-                },
-                json: function (resolve, reject) {
-                    response.json().then(resolve).catch(reject);
-                },
-                headers: {
-                    get: response.headers.get,
-                }
-            };
-        }).then(resolve).catch(reject);
-    } else if (typeof XMLHttpRequest !== 'undefined') {
+    function splitHeaders(headers) {
+        var headersMod = {};
+        var userAgent;
+        for (var key in headers) {
+            if (key.toLowerCase() === 'user-agent') {
+                userAgent = headers[key];
+                delete headers[key];
+            } else {
+                headersMod[key] = headers[key];
+            }
+        }
+        return {
+            headers: headersMod,
+            userAgent: userAgent
+        };
+    }
+    function doXHR(args) {
         xhr = new XMLHttpRequest();
-        xhr.open(req.method, url, true);
-        for (var hdr in req.headers)
-            xhr.setRequestHeader(hdr, req.headers[hdr]);
+        xhr.open(args.req.method, args.url, true);
+        for (var hdr in args.req.headers)
+            xhr.setRequestHeader(hdr, args.req.headers[hdr]);
         var doneCallbacks = [];
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 2) {
-                resolve({
+                args.resolve({
                     ok: (xhr.status >= 200 && xhr.status < 300),
                     status: xhr.status,
                     url: xhr.responseUrl,
-                    text: function (resolve, reject) {
-                        doneCallbacks.push(resolve);
+                    text: function (resolveInner, rejectInner) {
+                        doneCallbacks.push(resolveInner);
                     },
-                    json: function (resolve, reject) {
+                    json: function (resolveInner, rejectInner) {
                         doneCallbacks.push(function (responseText) {
+                            var parsed;
                             try {
-                                resolve(JSON.parse(responseText));
+                                parsed = JSON.parse(responseText);
                             } catch (err) {
-                                reject(err);
+                                return rejectInner(err);
                             }
+                            resolveInner(parsed);
                         });
                     },
                     headers: {
                         get: function (name) {
                             return xhr.getResponseHeader(name);
-                        }
+                        },
+                        _raw: xhr.getAllResponseHeaders()
                     }
                 });
             } else if (xhr.readyState === 4) {
@@ -107,24 +106,53 @@ function compatFetch(resolve, reject, url, req) {
             }
         };
         xhr.onerror = function () {
-            reject(new Error('XHR failed'));
+            args.reject(new Error('XHR failed'));
         };
 
-        if (req && typeof req.timeout === 'number') {
-            xhr.timeout = req.timeout;
+        if (args.req && typeof args.req.timeout === 'number') {
+            xhr.timeout = args.req.timeout;
         }
 
         xhr.ontimeout = function () {
-            reject(new Error('XHR timed out'));
+            args.reject(new Error('XHR timed out'));
         };
 
         try {
-            xhr.send(req.body);
+            xhr.send(args.req.body);
         } catch (err) {
-            reject(err);
+            args.reject(err);
         }
+    }
+    req = req || {};
+    req.method = req.method ? req.method.toUpperCase() : (req.body ? 'POST' : 'GET');
+    req.headers = req.headers || {};
+    req.body = req.body || null;
+    req.useXHR = req.useXHR || false;
+    var splitHeadersResult = splitHeaders(req.headers);
+    if (splitHeadersResult.userAgent && typeof phantom !== 'undefined') {
+        doXHR({ resolve: resolve, reject: reject, url: url, req: req });
+    } else if (typeof fetch === 'function') {
+        fetch(url, req).then(function (response) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                url: response.url,
+                text: function (resolveInner, rejectInner) {
+                    response.text().then(resolveInner).catch(rejectInner);
+                },
+                json: function (resolveInner, rejectInner) {
+                    response.json().then(resolveInner).catch(rejectInner);
+                },
+                headers: {
+                    get: response.headers.get,
+                    _raw: response.headers
+                }
+            };
+        }).then(resolve).catch(reject);
+    } else if (typeof XMLHttpRequest !== 'undefined' && (!splitHeadersResult.userAgent || req.useXHR)) {
+        doXHR({ resolve: resolve, reject: reject, url: url, req: req });
     } else {
-        reject(new Error('Neither fetch nor XHR is available.'));
+        reject(new Error('Could not find available networking API.'));
     }
 }
 
