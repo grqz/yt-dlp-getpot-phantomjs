@@ -1,4 +1,7 @@
-WIP, cuurently gets 403.
+A WIP yt-dlp plugin that attempts to generate POT with the phantomjs Javascript Interpreter.
 
+Current status: consistently gets 403 because UA can't be applied in phantomjs.
 
-The current problem is that we can't apply the `User-Agent` HTTP header to the actual requests.
+**PR Welcome**: apply UA to requests in phantomjs.
+
+The core code is located in [pot.es5.js](<js/pot.es5.cjs>).
