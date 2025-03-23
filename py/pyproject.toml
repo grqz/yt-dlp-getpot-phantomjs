@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "yt-dlp-getpot-phantomjs"
+name = "yt-dlp-getpot-jsi"
 dynamic = ["version"]
 requires-python = ">=3.9"
 keywords = ["yt-dlp", "yt-dlp-plugin", "yt-dlp-plugins-get-pot"]
@@ -25,7 +25,7 @@ packages = ["yt_dlp_plugins"]
 allow-direct-references = true
 
 [tool.hatch.version]
-path = "yt_dlp_plugins/extractor/ytpot_phantomjs.py"
+path = "yt_dlp_plugins/extractor/ytpot_jsi.py"
 
 [tool.ruff.format]
 quote-style = "single"
