@@ -7,35 +7,37 @@ from yt_dlp.extractor.common import InfoExtractor
 
 from .script import SCRIPT, SCRIPT_PHANOTOM_MINVER
 from .phantom_jsi import PhantomJSWrapperWithCustomArgs
+from .server import POTHTTPServer
 
 
 def construct_jsi(ie, *args, **kwargs):
     return PhantomJSWrapperWithCustomArgs(
-        ie, required_version=SCRIPT_PHANOTOM_MINVER)
+        ie, required_version=SCRIPT_PHANOTOM_MINVER, *args, **kwargs)
 
 
-def fetch_pots(ie, content_bindings, extra_args=None, phantom_jsi=None, *args, **kwargs):
+def fetch_pots(ie, content_bindings, Request, urlopen, extra_args=None, phantom_jsi=None, *args, **kwargs):
     # TODO: proxy
-    if not phantom_jsi:
+    if phantom_jsi is None:
         phantom_jsi = construct_jsi(
-            ie, content_bindings, extra_args=extra_args, phantom_jsi=phantom_jsi, *args, **kwargs)
-    execute = functools.partial(
-        phantom_jsi.execute,
-        phantom_args=[
-            # '--ssl-protocol=any'
-            # '--ignore-ssl-errors=true',
-            '--web-security=false',
-            # '--proxy=https://127.0.0.1:8080',
-            *(extra_args or [])
-        ],
-        script_args=content_bindings)
-    return traverse_obj(
-        SCRIPT, ({execute}, {lambda x: ie.write_debug(f'phantomjs stdout: {x}') or x},
-                 {str.splitlines}, -1, {str.strip}, {json.loads}))
+            ie, content_bindings, *args, **kwargs)
+    with POTHTTPServer(Request, urlopen) as pot_server:
+        script = r'var embeddedInputData = {data};'.format(data=json.dumps({
+            'port': pot_server.port,
+            'content_bindings': content_bindings,
+        })) + SCRIPT
+        execute = functools.partial(
+            phantom_jsi.execute,
+            phantom_args=[
+                '--web-security=false',
+                *(extra_args or [])
+            ])
+        return traverse_obj(
+            script, ({execute}, {lambda x: ie.write_debug(f'phantomjs stdout: {x}') or x},
+                     {str.splitlines}, -1, {str.strip}, {json.loads}))
 
 
 @typing.overload
-def fetch_pot(ie, content_binding, extra_args=None, phantom_jsi=None): ...
+def fetch_pot(ie, content_binding, Request, urlopen, extra_args=None, phantom_jsi=None): ...
 
 
 def fetch_pot(ie, content_binding, *args, **kwargs):

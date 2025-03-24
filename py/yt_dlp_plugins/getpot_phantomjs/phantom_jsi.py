@@ -17,7 +17,7 @@ class PhantomJSWrapperWithCustomArgs(PhantomJSwrapper):
 
         cmd = [
             self.exe,
-            *(phantom_args or ['--ssl-protocol=any']),
+            *(phantom_args if phantom_args is not None else ['--ssl-protocol=any']),
             self._TMP_FILES['script'].name,
             *(script_args or []),
         ]
@@ -28,6 +28,6 @@ class PhantomJSWrapperWithCustomArgs(PhantomJSwrapper):
         except Exception as e:
             raise ExtractorError(f'{note} failed: Unable to run PhantomJS binary', cause=e)
         if returncode:
-            raise ExtractorError(f'{note} failed with returncode {returncode}:\n{stderr.strip()}')
+            raise ExtractorError(f'{note} failed with returncode {returncode}:\n{stdout.strip()}')
 
         return stdout

@@ -215,16 +215,16 @@ const minter = await (async (integrityTokenResponse, webPoSignalOutput_) => {
 })(integrityTokenData, webPoSignalOutput);
 
 
-// innertube is just for visitor data generation
-import { Innertube } from 'youtubei.js';
+// // innertube is just for visitor data generation
+// import { Innertube } from 'youtubei.js';
 
-const innertube = await Innertube.create({ user_agent: USER_AGENT, enable_session_cache: false });
-const visitorData = innertube.session.context.client.visitorData || '';
+// const innertube = await Innertube.create({ user_agent: USER_AGENT, enable_session_cache: false });
+// const visitorData = innertube.session.context.client.visitorData || '';
 
-if (!visitorData)
-    throw new Error('Could not get visitor data');
+// if (!visitorData)
+//     throw new Error('Could not get visitor data');
 
 
-console.log(`visitorData(generated with Innertube): ${visitorData}`);
-console.log(`GVS: ${await minter(visitorData)}`);
-console.log(`player: ${await minter('dQw4w9WgXcQ')}`);
+// console.log(`visitorData(generated with Innertube): ${visitorData}`);
+// console.log(`GVS: ${await minter(visitorData)}`);
+console.log(`player: ${await minter(process.argv[2] || 'dQw4w9WgXcQ')}`);

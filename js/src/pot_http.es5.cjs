@@ -1,6 +1,7 @@
-# TODO: write a script to automatically generate this file
-# pot_http.es5.cjs
-SCRIPT = r'''
+var embeddedInputData = {
+    "port": 12345,
+    "content_bindings": ["dQw4w9WgXcQ"]
+};
 // var embeddedInputData = {data};
 
 var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36(KHTML, like Gecko)';
@@ -461,5 +462,3 @@ function buildPOTServerURL(path) {
         exit(1);
     }, buildPOTServerURL('/descrambled'));
 })();
-'''
-SCRIPT_PHANOTOM_MINVER = '1.9.0'

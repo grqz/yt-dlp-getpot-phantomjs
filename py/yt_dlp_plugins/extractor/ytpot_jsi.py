@@ -8,6 +8,7 @@ if typing.TYPE_CHECKING:
     from yt_dlp import YoutubeDL
 # NOTE: this is internal only and may be moved in the future
 from yt_dlp.networking._helper import select_proxy
+from yt_dlp.networking import Request
 from yt_dlp.networking.exceptions import UnsupportedRequest, RequestError
 from yt_dlp.utils import classproperty, remove_end
 
@@ -92,7 +93,8 @@ class PhantomJSGetPOTRH(getpot.GetPOTProvider):
     ) -> str:
         try:
             content_binding = self._get_content_binding(client, context, data_sync_id, visitor_data, video_id)
-            pot = fetch_pot(self._yt_ie, content_binding, phantom_jsi=self._jsi)
+            self._logger.debug(f'Generating POT for content binding: {content_binding}')
+            pot = fetch_pot(self._yt_ie, content_binding, Request, ydl.urlopen, phantom_jsi=self._jsi)
             self._logger.debug(f'Generated POT: {pot}')
             return pot
         except Exception as e:

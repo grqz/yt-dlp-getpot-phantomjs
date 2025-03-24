@@ -1,6 +1,5 @@
 # old code used to fetch and descramble challenge
 import json
-from urllib.request import Request, urlopen
 from yt_dlp.utils.traversal import traverse_obj, value
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36(KHTML, like Gecko)'
@@ -77,13 +76,33 @@ def parse_challenge(raw_challenge):
     })
 
 
-def fetch_challenge():
-    payload = [REQUEST_KEY]
-    req = Request(
-        build_url('Create', False),
-        data=json.dumps(payload).encode(),
-        headers=get_headers())
-    raw_data = None
-    with urlopen(req) as resp:
-        raw_data = json.loads(resp.read())
-    return parse_challenge(raw_data)
+class BG:
+    def __init__(self, Request, urlopen, use_yt=False):
+        self._Request = Request
+        self._urlopen = urlopen
+        self._use_yt = use_yt
+
+    def fetch_challenge(self):
+        payload = [REQUEST_KEY]
+        req = self._Request(
+            build_url('Create', self._use_yt),
+            data=json.dumps(payload).encode(),
+            headers=get_headers())
+        with self._urlopen(req) as resp:
+            raw_data = json.loads(resp.read())
+        return parse_challenge(raw_data)
+
+    def generate_integrity_token(self, bg_resp):
+        payload = [REQUEST_KEY, bg_resp]
+        req = self._Request(
+            build_url('GenerateIT', self._use_yt),
+            data=json.dumps(payload).encode(),
+            headers=get_headers())
+        with self._urlopen(req) as resp:
+            integrity_token_json = json.loads(resp.read())
+        return traverse_obj(integrity_token_json, {
+            'integrityToken': 0,
+            'estimatedTtlSecs': 1,
+            'mintRefreshThreshold': 2,
+            'websafeFallbackToken': 3,
+        })
