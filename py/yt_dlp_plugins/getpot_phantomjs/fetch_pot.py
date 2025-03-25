@@ -1,9 +1,7 @@
 import functools
 import json
 import typing
-from yt_dlp import YoutubeDL
 from yt_dlp.utils.traversal import traverse_obj
-from yt_dlp.extractor.common import InfoExtractor
 
 from .script import SCRIPT, SCRIPT_PHANOTOM_MINVER
 from .phantom_jsi import PhantomJSWrapperWithCustomArgs
@@ -42,9 +40,3 @@ def fetch_pot(ie, content_binding, Request, urlopen, extra_args=None, phantom_js
 
 def fetch_pot(ie, content_binding, *args, **kwargs):
     return traverse_obj(fetch_pots(ie, [content_binding], *args, **kwargs), 0)
-
-
-def main():
-    ydl = YoutubeDL({'verbose': True})
-    ie = InfoExtractor(ydl)
-    print(fetch_pot(ie, 'dQw4w9WgXcQ'))
