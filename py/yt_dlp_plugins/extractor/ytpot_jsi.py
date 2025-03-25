@@ -6,9 +6,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from yt_dlp import YoutubeDL
-# NOTE: this is internal only and may be moved in the future
-from yt_dlp.networking._helper import select_proxy
-from yt_dlp.networking import Request
+from yt_dlp.networking.common import Request, Features
 from yt_dlp.networking.exceptions import UnsupportedRequest, RequestError
 from yt_dlp.utils import classproperty, remove_end
 
@@ -26,9 +24,10 @@ class PhantomJSGetPOTRH(getpot.GetPOTProvider):
     _SUPPORTED_CLIENTS = ('web', 'web_safari', 'web_embedded',
                           'web_music', 'web_creator', 'mweb', 'tv_embedded', 'tv')
     VERSION = __version__
-    # TODO: proxy
-    _SUPPORTED_PROXY_SCHEMES = ()
-    _SUPPORTED_FEATURES = ()
+    # TODO: cache
+    _SUPPORTED_PROXY_SCHEMES = (
+        'http', 'https', 'socks4', 'socks4a', 'socks5', 'socks5h')
+    _SUPPORTED_FEATURES = (Features.ALL_PROXY, Features.NO_PROXY)
     _SUPPORTED_CONTEXTS = ('gvs', 'player')
 
     @classproperty
@@ -51,14 +50,6 @@ class PhantomJSGetPOTRH(getpot.GetPOTProvider):
             # web_music player or gvs is bound to data_sync_id or visitor_data
             return data_sync_id or visitor_data
         return video_id
-
-    def _get_yt_proxy(self):
-        if ((proxy := select_proxy('https://jnn-pa.googleapis.com', self.proxies))
-                != select_proxy('https://youtube.com', self.proxies)):
-            self._logger.warning(
-                'Proxies for https://youtube.com and https://jnn-pa.googleapis.com are different. '
-                'This is likely to cause subsequent errors.')
-        return proxy
 
     def _validate_get_pot(
         self,
@@ -103,4 +94,4 @@ class PhantomJSGetPOTRH(getpot.GetPOTProvider):
 
 @getpot.register_preference(PhantomJSGetPOTRH)
 def phantomjs_getpot_preference(rh, req):
-    return 201
+    return 210

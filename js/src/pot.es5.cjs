@@ -332,7 +332,7 @@ function getWebSafeMinter(resolve, reject, integrityTokenData, webPoSignalOutput
         if (!result)
             rejectInner(new Error('YNJ:Undefined'));
         // do we need to test if result is a U8arr?
-        resolveInner(UTF8ArrToB64(result));
+        resolveInner(UTF8ArrToB64(result, true));
     });
 }
 

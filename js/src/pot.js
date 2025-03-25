@@ -107,12 +107,12 @@ function isBrowser() {
 }
 
 let headers = {
-    'Content-Type': 'application/json+protobuf',
-    'X-Goog-Api-Key': GOOG_API_KEY,
-    'X-User-Agent': 'grpc-web-javascript/0.1'
+    'content-type': 'application/json+protobuf',
+    'x-goog-api-key': GOOG_API_KEY,
+    'x-user-agent': 'grpc-web-javascript/0.1'
 };
 if (!isBrowser())
-    headers['User-Agent'] = USER_AGENT;
+    headers['user-agent'] = USER_AGENT;
 
 // fetch challenge
 const payload = [REQUEST_KEY];
@@ -210,7 +210,7 @@ const minter = await (async (integrityTokenResponse, webPoSignalOutput_) => {
                 throw new Error('ODM:Invalid');
             return result;
         })(identifier));
-        return u8ToBase64(res);
+        return u8ToBase64(res, true);
     };
 })(integrityTokenData, webPoSignalOutput);
 
@@ -227,4 +227,4 @@ const minter = await (async (integrityTokenResponse, webPoSignalOutput_) => {
 
 // console.log(`visitorData(generated with Innertube): ${visitorData}`);
 // console.log(`GVS: ${await minter(visitorData)}`);
-console.log(`player: ${await minter(process.argv[2] || 'dQw4w9WgXcQ')}`);
+console.log(await minter(process.argv[2] || 'dQw4w9WgXcQ'));
