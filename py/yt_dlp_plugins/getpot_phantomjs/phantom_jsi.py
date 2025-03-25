@@ -17,7 +17,10 @@ class PhantomJSWrapperWithCustomArgs(PhantomJSwrapper):
 
         cmd = [
             self.exe,
-            *(phantom_args if phantom_args is not None else ['--ssl-protocol=any']),
+            *([
+                '--ssl-protocol=any',
+                '--web-security=false',
+            ] if phantom_args is None else phantom_args),
             self._TMP_FILES['script'].name,
             *(script_args or []),
         ]

@@ -1,4 +1,3 @@
-import functools
 import json
 import typing
 from yt_dlp.utils.traversal import traverse_obj
@@ -13,8 +12,7 @@ def construct_jsi(ie, *args, **kwargs):
         ie, required_version=SCRIPT_PHANOTOM_MINVER, *args, **kwargs)
 
 
-def fetch_pots(ie, content_bindings, Request, urlopen, extra_args=None, phantom_jsi=None, *args, **kwargs):
-    # TODO: proxy
+def fetch_pots(ie, content_bindings, Request, urlopen, phantom_jsi=None, *args, **kwargs):
     if phantom_jsi is None:
         phantom_jsi = construct_jsi(
             ie, content_bindings, *args, **kwargs)
@@ -23,14 +21,8 @@ def fetch_pots(ie, content_bindings, Request, urlopen, extra_args=None, phantom_
             'port': pot_server.port,
             'content_bindings': content_bindings,
         })) + SCRIPT
-        execute = functools.partial(
-            phantom_jsi.execute,
-            phantom_args=[
-                '--web-security=false',
-                *(extra_args or [])
-            ])
         return traverse_obj(
-            script, ({execute}, {lambda x: ie.write_debug(f'phantomjs stdout: {x}') or x},
+            script, ({phantom_jsi.execute}, {lambda x: ie.write_debug(f'phantomjs stdout: {x}') or x},
                      {str.splitlines}, -1, {str.strip}, {json.loads}))
 
 

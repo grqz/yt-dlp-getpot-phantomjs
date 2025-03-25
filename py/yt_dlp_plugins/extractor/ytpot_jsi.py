@@ -67,7 +67,7 @@ class PhantomJSGetPOTRH(getpot.GetPOTProvider):
             try:
                 self._jsi = construct_jsi(self._yt_ie)
             except Exception as e:
-                raise UnsupportedRequest(e) from e
+                self._warn_and_raise(f'Failed to construct phantomjs interpreter: {e}', raise_from=e)
 
     def _get_pot(
         self,

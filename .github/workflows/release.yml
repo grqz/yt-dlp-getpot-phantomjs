@@ -82,7 +82,7 @@ jobs:
 
   release_pypi:
     name: Release to PyPI
-    if: false&&format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
+    if: format('refs/heads/{0}', github.event.repository.default_branch) == github.ref
     # only release on default branch
     runs-on: ubuntu-latest
     permissions:
@@ -111,4 +111,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           verbose: true
-          packages-dir: plugin/dist
+          packages-dir: py/dist
