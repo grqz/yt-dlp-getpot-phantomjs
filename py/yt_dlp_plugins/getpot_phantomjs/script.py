@@ -1,13 +1,10 @@
 # TODO: write a script to automatically generate this file
 # pot_http.es5.cjs
-SCRIPT = r'''
-// var embeddedInputData = {data};
-
-var USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36(KHTML, like Gecko)';
-var GOOG_API_KEY = 'AIzaSyDyT5W0Jh49F30Pqqtyfdf7pDLFKLJoAnw';
-var REQUEST_KEY = 'O43z0dpjhgX20SCx4KAo';
-var YT_BASE_URL = 'https://www.youtube.com';
-var GOOG_BASE_URL = 'https://jnn-pa.googleapis.com';
+SCRIPT = r'''// Example input:
+// var embeddedInputData = {
+//     "port": 12345,
+//     "content_bindings": ["dQw4w9WgXcQ"]
+// };
 
 var globalObj = (typeof globalThis !== 'undefined') ? globalThis :
     (typeof global !== 'undefined') ? global :
@@ -33,21 +30,6 @@ function exit(code) {
         // `'phantom.exit();' in jscode`
     } else if (typeof process !== 'undefined')
         process.exit(code);
-}
-
-function compatGetProcessArgs() {
-    if (typeof process !== 'undefined' && typeof process.argv !== 'undefined') {
-        if (process.argv.length <= 2) return [];
-        var args = process.argv.slice(2);
-        return args;
-    } else if (typeof phantom !== 'undefined') {
-        var system = require('system');
-        if (system.args.length <= 1) return [];
-        var args = system.args.slice(1);
-        return args;
-    } else {
-        console.error('Unknown environment!');
-    }
 }
 
 function compatFetch(resolve, reject, url, req) {
@@ -177,7 +159,6 @@ function UTF8ArrToB64(u8, b64Url) {
     return result;
 }
 
-// We need UTF 8
 function encodeASCII(str) {
     var ret = [];
     str.split('').forEach(function (chr) {
@@ -289,10 +270,8 @@ function buildPOTServerURL(path) {
                 function (bg) {
                     var webPoSignalOutput = [];
                     snapshot(function (botguardResponse) {
-                        var generatePayload = [REQUEST_KEY, botguardResponse];
                         compatFetch(function (integrityTokenResponse) {
                             integrityTokenResponse.json(function (integrityTokenJson) {
-                                console.log('fetched it:', JSON.stringify(integrityTokenJson));
                                 if (!integrityTokenResponse.ok || !integrityTokenJson) {
                                     console.error('Failed to get integrity token response:', (integrityTokenResponse && integrityTokenResponse.error) || '')
                                     exit(1);
@@ -311,7 +290,7 @@ function buildPOTServerURL(path) {
                                             exitIfCompleted();
                                         }, function (err) {
                                             console.error(
-                                                'Failed to mint web-safe POT for identifier'.concat(identifier, ':'), err);
+                                                'Failed to mint web-safe POT for identifier '.concat(identifier, ':'), err);
                                             pots[idx] = null;
                                             exitIfCompleted();
                                         }, identifier);
