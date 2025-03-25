@@ -44,6 +44,7 @@ This will automatically install the [GetPOT plugin](<https://github.com/coletdjn
 
 For more locations and methods, see [installing yt-dlp plugins](<https://github.com/yt-dlp/yt-dlp#installing-plugins>)
 
+---
 
 If installed correctly, you should see the provider's version in `yt-dlp -v` output:
 
