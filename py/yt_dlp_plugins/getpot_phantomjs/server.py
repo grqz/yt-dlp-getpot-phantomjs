@@ -1,6 +1,7 @@
 import json
 import socket
 import threading
+import traceback
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from .utils import BG
 
@@ -15,7 +16,6 @@ class POTHTTPServer:
                     try:
                         descrambled = json.dumps(bg.fetch_challenge()).encode()
                     except Exception as e:
-                        import traceback
                         traceback.print_exc()
                         self.send_response(500)
                         self.send_header('Access-Control-Allow-Origin', '*')
@@ -53,7 +53,6 @@ class POTHTTPServer:
                     try:
                         itd = json.dumps(bg.generate_integrity_token(bg_resp)).encode()
                     except Exception as e:
-                        import traceback
                         traceback.print_exc()
                         self.send_response(500)
                         self.send_header('Access-Control-Allow-Origin', '*')

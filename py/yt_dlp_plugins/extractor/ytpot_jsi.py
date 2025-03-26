@@ -87,6 +87,8 @@ class PhantomJSGetPOTRH(getpot.GetPOTProvider):
             self._logger.debug(f'Generating POT for content binding: {content_binding}')
             pot = fetch_pot(self._yt_ie, content_binding, Request, ydl.urlopen, phantom_jsi=self._jsi)
             self._logger.debug(f'Generated POT: {pot}')
+            if not pot:
+                raise ValueError('Unexpected empty POT')
             return pot
         except Exception as e:
             raise RequestError(e) from e

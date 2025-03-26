@@ -1,4 +1,3 @@
-# old code used to fetch and descramble challenge
 import json
 from yt_dlp.utils.traversal import traverse_obj, value
 
