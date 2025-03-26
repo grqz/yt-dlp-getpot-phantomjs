@@ -6,9 +6,16 @@ The core code is located in [pot_http.es5.js](<js/src/pot_http.es5.cjs>).
 
 # Installing
 
-Requires yt-dlp **`2024.09.27`** or above.
+## Requirements
+1. yt-dlp **`2024.09.27`** or above
+2. PhantomJS **`1.9.0`** or above
 
-## Installing with PyPI
+## Installing PhantomJS
+
+1. Download and unzip PhantomJS from [*Download PhantomJS*](<https://phantomjs.org/download.html>)
+2. Make sure the PhantomJS is available in your `PATH`
+
+## Installing the plugin
 If yt-dlp is installed through `pip` or `pipx`, you can install the plugin with the following:
 
 **pip/pipx**
@@ -26,8 +33,8 @@ This will automatically install the [GetPOT plugin](<https://github.com/coletdjn
 
 **Manual**
 
-1. Install `yt-dlp-get-pot`. See [*Installing*](<https://github.com/coletdjnz/yt-dlp-get-pot?tab=readme-ov-file#installing>).
-1. Go to the [latest release](<https://github.com/grqz/yt-dlp-getpot-jsi/releases/latest>).
+1. Install `yt-dlp-get-pot`. See [*Installing*](<https://github.com/coletdjnz/yt-dlp-get-pot?tab=readme-ov-file#installing>)
+1. Go to the [latest release](<https://github.com/grqz/yt-dlp-getpot-jsi/releases/latest>)
 2. Find `yt-dlp-getpot-jsi.zip` and download it to one of the [yt-dlp plugin locations](<https://github.com/yt-dlp/yt-dlp#installing-plugins>)
 
     - User Plugins
