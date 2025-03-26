@@ -50,6 +50,7 @@ jobs:
         shell: bash
         run: |
           cd py/
+          python devscripts/make_script.py
           mkdir bundle/
           cp -r yt_dlp_plugins bundle/
           cd bundle/
@@ -105,6 +106,7 @@ jobs:
         run: |
           cd py/
           rm -rf dist/**
+          python devscripts/make_script.py
           python -m build --no-isolation .
 
       - name: Publish to PyPI

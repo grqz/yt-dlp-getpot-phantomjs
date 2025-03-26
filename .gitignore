@@ -1,6 +1,6 @@
-js/node_modules
+/js/node_modules
 __pycache__
 tmp/
 bundle
 dist
-dist
+/py/yt_dlp_plugins/getpot_phantomjs/script.py
