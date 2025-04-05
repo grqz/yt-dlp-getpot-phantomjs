@@ -2,7 +2,7 @@ A yt-dlp GetPOT plugin that attempts to generate POT with the phantomjs Javascri
 
 Current status: works with an HTTP server on the python side.
 
-The core code is located in [pot_http.es5.js](<js/src/pot_http.es5.cjs>).
+The core JS code is located in [pot_http.es5.js](<js/src/pot_http.es5.cjs>).
 
 # Installing
 
@@ -13,7 +13,7 @@ The core code is located in [pot_http.es5.js](<js/src/pot_http.es5.cjs>).
 ## Installing PhantomJS
 
 1. Download and unzip PhantomJS from [*Download PhantomJS*](<https://phantomjs.org/download.html>)
-2. Make sure the PhantomJS is available in your `PATH`
+2. Make sure the PhantomJS is available in your `PATH` (see [*How do I set or change the PATH system variable?*](<https://www.java.com/en/download/help/path.html>))
 
 ## Installing the plugin
 If yt-dlp is installed through `pip` or `pipx`, you can install the plugin with the following:
