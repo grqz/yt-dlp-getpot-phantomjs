@@ -12,7 +12,10 @@ def construct_jsi(ie, *args, **kwargs):
         ie, required_version=SCRIPT_PHANOTOM_MINVER, *args, **kwargs)
 
 
-def fetch_pots(ie, content_bindings, Request, urlopen, phantom_jsi=None, log=lambda x: None, *args, **kwargs):
+def dont_log(x): ...
+
+
+def fetch_pots(ie, content_bindings, Request, urlopen, phantom_jsi=None, log=dont_log, *args, **kwargs):
     if phantom_jsi is None:
         phantom_jsi = construct_jsi(
             ie, content_bindings, *args, **kwargs)
@@ -27,7 +30,7 @@ def fetch_pots(ie, content_bindings, Request, urlopen, phantom_jsi=None, log=lam
 
 
 @typing.overload
-def fetch_pot(ie, content_binding, Request, urlopen, phantom_jsi=None, log=None): ...
+def fetch_pot(ie, content_binding, Request, urlopen, phantom_jsi=dont_log, log=None): ...
 
 
 def fetch_pot(ie, content_binding, *args, **kwargs):
