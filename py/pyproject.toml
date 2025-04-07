@@ -6,12 +6,12 @@ build-backend = "hatchling.build"
 name = "yt-dlp-getpot-jsi"
 dynamic = ["version"]
 requires-python = ">=3.9"
-keywords = ["yt-dlp", "yt-dlp-plugin", "yt-dlp-plugins-get-pot"]
+keywords = ["yt-dlp", "yt-dlp-plugin", "yt-dlp-plugins-pot"]
 maintainers = [
   { name = "grqz" },
 ]
 dependencies = [
-  "yt-dlp-get-pot>=0.1.1",
+"yt-dlp @ git+https://github.com/coletdjnz/yt-dlp-dev@feat/youtube/pot-provider-framework",
 ]
 
 [tool.hatch.env.default]

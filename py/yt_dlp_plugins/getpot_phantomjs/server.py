@@ -7,10 +7,14 @@ from .utils import BG
 
 
 class POTHTTPServer:
-    def __init__(self, Request, urlopen, port=0):
+    def __init__(self, Request, urlopen, trace_logger=None, port=0):
         bg = BG(Request, urlopen)
 
         class SimpleHandler(BaseHTTPRequestHandler):
+            def log_message(self, format, *args):
+                if trace_logger is not None:
+                    trace_logger(format % args)
+
             def do_GET(self):
                 if self.path.lower() == '/descrambled':
                     try:
