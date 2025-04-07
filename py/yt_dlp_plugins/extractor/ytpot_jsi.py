@@ -64,7 +64,6 @@ class PhantomJSWebPTP(PoTokenProvider):
             pot = fetch_pot(self.ie, content_binding, Request=Request,
                             urlopen=lambda req: self._urlopen(pot_request=ctx, http_request=req),
                             phantom_jsi=self._jsi, stdout_logger=self.logger)
-            self.logger.trace(f'Generated POT: {pot}')
             if not pot:
                 raise ValueError('Unexpected empty POT')
             return PoTokenResponse(po_token=pot)
