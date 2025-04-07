@@ -7,7 +7,6 @@ from yt_dlp.extractor.youtube.pot.provider import (
     PoTokenContext,
     PoTokenProvider,
     PoTokenProviderError,
-    PoTokenProviderRejectedRequest,
     PoTokenRequest,
     PoTokenResponse,
     register_preference,
@@ -26,30 +25,19 @@ class PhantomJSWebPTP(PoTokenProvider):
         'http', 'https', 'socks4', 'socks4a', 'socks5', 'socks5h')
     _SUPPORTED_CONTEXTS = (PoTokenContext.GVS, PoTokenContext.PLAYER)
     BUG_REPORT_LOCATION = 'https://github.com/grqz/yt-dlp-getpot-jsi/issues'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._jsi = None
-
-    def _warn_and_raise(self, msg, once=True, raise_from=None):
-        self.logger.warning(msg, once=once)
-        raise PoTokenProviderRejectedRequest(msg) from raise_from
-
-    @staticmethod
-    def _get_content_binding(client, context, data_sync_id=None, visitor_data=None, video_id=None):
-        # https://github.com/yt-dlp/yt-dlp/wiki/PO-Token-Guide#po-tokens-for-player
-        if context == 'gvs' or client == 'web_music':
-            # web_music player or gvs is bound to data_sync_id or visitor_data
-            return data_sync_id or visitor_data
-        return video_id
+    # PhantomJS wrapper instance
+    _JSI_INSTANCE = None
 
     def is_available(self):
-        if not self._jsi:
+        if self._JSI_INSTANCE is False:
+            return False
+        elif self._JSI_INSTANCE is None:
             try:
-                self._jsi = construct_jsi(self.ie)
-                return True
+                self._JSI_INSTANCE = construct_jsi(self.ie)
             except Exception as e:
-                self._warn_and_raise(f'Failed to construct phantomjs interpreter: {e}', raise_from=e)
+                # Don't try to construct it next time
+                self._JSI_INSTANCE = False
+                self.logger.warning(f'Failed to construct phantomjs interpreter: {e}')
                 return False
         return True
 
@@ -63,7 +51,7 @@ class PhantomJSWebPTP(PoTokenProvider):
             # The PhantomJS wrapper will log to info for us
             pot = fetch_pot(self.ie, content_binding, Request=Request,
                             urlopen=lambda req: self._urlopen(pot_request=ctx, http_request=req),
-                            phantom_jsi=self._jsi, stdout_logger=self.logger)
+                            phantom_jsi=self._JSI_INSTANCE, pot_logger=self.logger)
             if not pot:
                 raise ValueError('Unexpected empty POT')
             return PoTokenResponse(po_token=pot)
