@@ -20,8 +20,7 @@ class PhantomJSWebPTP(PoTokenProvider):
     PROVIDER_VERSION = __version__
     BUG_REPORT_LOCATION = 'https://github.com/grqz/yt-dlp-getpot-jsi/issues'
     _SUPPORTED_CLIENTS = WEBPO_CLIENTS
-    _SUPPORTED_PROXY_SCHEMES = (
-        'http', 'https', 'socks4', 'socks4a', 'socks5', 'socks5h')
+    _SUPPORTED_PROXY_SCHEMES = None
     _SUPPORTED_CONTEXTS = (PoTokenContext.GVS, PoTokenContext.PLAYER)
     # PhantomJS unavailable in the current environment
     _PJS_UNAVAILABLE = False
