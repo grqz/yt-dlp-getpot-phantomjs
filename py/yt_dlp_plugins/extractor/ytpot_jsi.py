@@ -47,12 +47,23 @@ class PhantomJSWebPTP(PoTokenProvider):
         ctx: PoTokenRequest,
     ) -> PoTokenResponse:
         try:
+            raw_challenge_data = self.ie._search_regex(
+                r'''(?sx)window\.ytAtR\s*=\s*(?P<raw_cd>(?P<q>['"])
+                    (?:
+                        \\.|
+                        (?!(?P=q)).
+                    )*
+                (?P=q))\s*;''',
+                ctx.video_webpage, 'raw challenge data',  default=None, group='raw_cd')
+            with open('../tmp/challenge_data.txt', 'w') as f:
+                f.write(raw_challenge_data)
             content_binding = get_webpo_content_binding(ctx)[0]
             self.logger.trace(f'Generating WebPO for content binding: {content_binding}')
             # The PhantomJS wrapper will log to info for us
             pot = fetch_pot(self.ie, content_binding, Request=Request,
                             urlopen=lambda req: self._urlopen(pot_request=ctx, http_request=req),
-                            phantom_jsi=self._jsi, log=self.logger.trace)
+                            phantom_jsi=self._jsi, log=self.logger.trace,
+                            challenge_data=raw_challenge_data)
             if not pot:
                 raise ValueError('Unexpected empty POT')
             return PoTokenResponse(po_token=pot)
