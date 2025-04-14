@@ -8,7 +8,7 @@ from yt_dlp.extractor.youtube.pot.provider import (
     register_preference,
     register_provider,
 )
-from yt_dlp.extractor.youtube.pot.builtin.utils import WEBPO_CLIENTS, get_webpo_content_binding
+from yt_dlp.extractor.youtube.pot.utils import WEBPO_CLIENTS, get_webpo_content_binding
 from ..getpot_phantomjs.fetch_pot import construct_jsi, fetch_pot
 
 __version__ = '0.1.0'
